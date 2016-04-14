@@ -1,5 +1,6 @@
 ## Automatic ARCTIC reductions
 Kolby Weisenburger
+
 2016
 
 Automatic reduction pipeline for the Astrophysical Research Consortium Telescope Imaging Camera ([ARCTIC](http://www.apo.nmsu.edu/arc35m/Instruments/ARCTIC/)) at Apache Point Observatory ([APO](http://www.apo.nmsu.edu/)).
@@ -7,7 +8,7 @@ Automatic reduction pipeline for the Astrophysical Research Consortium Telescope
 
 to use:
 
-** python reduce_arctic.py [your directory of data]**
+**python reduce_arctic.py [your directory of data]**
 
 OR place .py in your folder with data and run with no argument:
 
