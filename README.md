@@ -1,0 +1,43 @@
+## Automatic ARCTIC reductions
+Kolby Weisenburger
+2016
+
+Automatic reduction pipeline for the Astrophysical Research Consortium Imaging Camera (ARCTIC) at Apache Point Observatory (APO).
+
+
+to use:
+python reduce_arctic.py [your directory of data]
+
+OR place .py in your folder with data and run with no argument:
+python reduce_arctic.py
+
+creates /reduced/cals/ and /reduced/data/
+
+
+
+
+
+  ```bash
+04:50:00 $ python /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160208/acronym.py /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160209
+
+ >>> Starting bias combine...
+     > Created master bias
+
+ >>> Starting darks (if you have them)...
+     > Created master 10.0 second dark
+     > Created master 120.0 second dark
+     > Created master 30.0 second dark
+     > Created master 300.0 second dark
+     > Created master 5.0 second dark
+     > Created master 60.0 second dark
+
+ >>> Starting flats...
+     > Created master MSSSO R flat
+     > Created master MSSSO B flat
+     > Created master MSSSO I flat
+     > Created master MSSSO U flat
+     > Created master MSSSO V flat
+
+ >>> 65 science images found. Starting reductions...
+ >>> Finished reductions! 
+  ```
