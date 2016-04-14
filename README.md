@@ -18,7 +18,7 @@ creates /reduced/cals/ and /reduced/data/
 
 
   ```bash
-04:50:00 $ python /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160208/acronym.py /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160209
+04:50:00 $ python reduce_arctic.py /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160209
 
  >>> Starting bias combine...
      > Created master bias
