@@ -91,7 +91,6 @@ def trim_image(f):
     return [sci,dat_head]
 
 
-
 ### CREATE MASTER BIAS #######################################
 
 print('\n >>> Starting bias combine...')
