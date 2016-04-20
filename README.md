@@ -19,7 +19,6 @@ creates [your directory]/reduced/cals/ and [your directory]/reduced/data/
 
 
 
-
   ```bash
 04:50:00 $ python reduce_arctic.py /Users/kolbylyn/Desktop/UT02072016/Q1UW02/UT160209
 
