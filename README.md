@@ -5,6 +5,9 @@ Kolby Weisenburger
 
 Automatic reduction pipeline for the Astrophysical Research Consortium Telescope Imaging Camera ([ARCTIC](http://www.apo.nmsu.edu/arc35m/Instruments/ARCTIC/)) at Apache Point Observatory ([APO](http://www.apo.nmsu.edu/)).
 
+![M106]
+(https://github.com/kweis/arctic/blob/master/Aligned_m106.png)
+
 
 to use:
 
