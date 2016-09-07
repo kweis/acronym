@@ -1,0 +1,23 @@
+{
+  "@context": "https://raw.githubusercontent.com/mbjones/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "0000-0002-4639-1436",
+      "@type": "Person",
+      "email": "kweis@uw.edu",
+      "name": "Kolby Weisenburger",
+      "affiliation": "University of Washington"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/kweis/acronym",
+  "datePublished": "2016-09-07",
+  "dateModified": "2016-09-07",
+  "dateCreated": "2016-09-07",
+  "description": "acronym: An automatic reduction pipeline for astronomical images",
+  "keywords": "Python, data reduction, astronomy",
+  "license": "MIT",
+  "title": "acronym",
+  "version": ""
+}
