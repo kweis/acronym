@@ -22,4 +22,4 @@ This M106 image is the product of three stacked acronym-reduced images.
 
 -![M106 in all its glory.](Aligned_m106.png)
 
-# References
+# References 
