@@ -5,10 +5,19 @@ tags:
   - data reduction
   - astronomy
 authors:
-  - name: Kolby Weisenburger
+  - name: Kolby L. Weisenburger
     orcid: 0000-0002-4639-1436
     affiliation: University of Washington
-date: 7 Sep 2016
+  - name: Joseph Huenerhoff
+    orcid:
+    affiliation: University of Washington
+  - name: Emily M. Levesque
+    orcid:
+    affiliation: University of Washington
+  - name: Philip Massey
+    orcid:
+    affiliation: Lowell Observatory
+date: 19 Oct 2016
 bibliography: paper.bib
 ---
 
