@@ -8,7 +8,7 @@ authors:
   - name: Kolby L. Weisenburger
     orcid: 0000-0002-4639-1436
     affiliation: University of Washington
-  - name: Joseph Huenerhoff
+  - name: Joseph Huehnerhoff
     orcid:
     affiliation: University of Washington
   - name: Emily M. Levesque
