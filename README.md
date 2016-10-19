@@ -1,5 +1,5 @@
 ## Automatic ARCTIC reductions
-Kolby L. Weisenburger, Joseph Hue
+Kolby L. Weisenburger, Joseph Huehnerhoff, Emily M. Levesque, Philip Massey
 
 2016
 
