@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-reduce_arctic.py
+acronym.py
 Kolby Weisenburger
 2016
 
@@ -10,10 +10,10 @@ Automatic reduction pipeline for the Astrophysical Research Consortium Imaging C
 
 
 to use:
-python reduce_arctic.py [your directory of data]
+python acronym.py [your directory of data]
 
 OR place .py in your folder with data and run with no argument:
-python reduce_arctic.py
+python acronym.py
 
 creates /reduced/cals/ and /reduced/data/
 
@@ -36,21 +36,20 @@ if len(sys.argv) > 0:
 else:
     direc = '.'
     
-files = glob.glob(direc+"/*.fits")
-
 
 if not os.path.exists(direc+'/reduced/cals'):
     os.makedirs(direc+'/reduced/cals')
 if not os.path.exists(direc+'/reduced/data'):
     os.makedirs(direc+'/reduced/data')
 
-    
+# grab all files from the directory; organize dataframe
+files = glob.glob(direc+"/*.fits")
+
 df = pd.DataFrame(files,columns=['fname'])
 df['objtype'] = pd.Series("", index=df.index)
 df['filt'] = pd.Series("", index=df.index)
 df['exp'] = pd.Series("", index=df.index)
 df['objname'] = pd.Series("", index=df.index)
-
 
 for ff,fname in enumerate(files):
     try:
@@ -62,6 +61,7 @@ for ff,fname in enumerate(files):
         print('\n File corrupt or missing: ' + fname)
 
 
+# ARCTIC reads out images in various ways. check headers for quad or LL (lower left) mode and trim respectively        
 def trim_image(f):
     datfile = pyfits.getdata(f, header=True)
     dat_raw = datfile[0]
