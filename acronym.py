@@ -28,15 +28,17 @@ import glob
 import os
 import re
 import sys
+import warnings
 import pandas as pd
 
+# ignore overwriting reduced files warnings in case you need to rerun
+warnings.filterwarnings('ignore', message='Overwriting existing file')
 
-if len(sys.argv) > 0:
+if len(sys.argv) > 1:
     direc = sys.argv[1]
 else:
     direc = '.'
     
-
 if not os.path.exists(direc+'/reduced/cals'):
     os.makedirs(direc+'/reduced/cals')
 if not os.path.exists(direc+'/reduced/data'):
@@ -91,17 +93,34 @@ def trim_image(f):
     return [sci,dat_head]
 
 
+
+# given an exposure time, go get that dark or scale down from longest dark. 
+def getdark(expt):
+    try:
+        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(expt)+'.fits')
+    except IOError:
+        scaleto = np.max(df['exp'][df['exp'] != ''])
+        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(scaleto)+'.fits')
+        dark *= (expt/scaleto)
+    return dark
+
+
+
+
+
 ### CREATE MASTER BIAS #######################################
 
 print('\n >>> Starting bias combine...')
 
 bias_idx = df[df['objtype'] == 'Bias'].index.tolist()
-biases = np.array([trim_image(df['fname'][n])[0] for n in bias_idx])
-
-bias = np.median(biases,axis=0)
-pyfits.writeto(direc+'/reduced/cals/master_bias.fits',bias,clobber=True)
-
-print('     > Created master bias')
+if len(bias_idx) == 0:
+    print('   > No biases found. Continuing reductions...')
+    bias=0.
+else:
+    biases = np.array([trim_image(df['fname'][n])[0] for n in bias_idx])
+    bias = np.median(biases,axis=0)
+    pyfits.writeto(direc+'/reduced/cals/master_bias.fits',bias,clobber=True)
+    print('   > Created master bias')
 
 
 
@@ -110,22 +129,20 @@ print('     > Created master bias')
 
 times = pd.unique(df.exp.ravel())
 
-print('\n >>> Starting darks (if you have them)...')
+print('\n >>> Starting darks...')
 
 for ii in range(0,len(times)):
     dark_idx = df[(df['exp'] == times[ii]) & 
                 (df['objtype'] == 'Dark')].index.tolist()
     if len(dark_idx) == 0:
-        continue
-      
-    #print [(df['fname'][n]) for n in dark_idx]
-    darks = np.array([trim_image(df['fname'][n])[0] 
-                      for n in dark_idx]) - bias
-    dark_final = np.median(darks,axis=0)
+        print('   > No darks found for exposure time ' + str(times[ii]) + ' sec. Continuing reductions...')
+    else:
+        darks = np.array([trim_image(df['fname'][n])[0] for n in dark_idx]) - bias
+        dark_final = np.median(darks,axis=0)
     
-    name = direc+'/reduced/cals/master_dark_'+str(times[ii])+'.fits'
-    pyfits.writeto(name,dark_final,clobber=True)
-    print('     > Created master '+ str(times[ii])+' second dark')
+        name = direc+'/reduced/cals/master_dark_'+str(times[ii])+'.fits'
+        pyfits.writeto(name,dark_final,clobber=True)
+        print('   > Created master '+ str(times[ii])+' second dark')
 
 
 
@@ -143,25 +160,22 @@ for ii in range(0,len(filters)):
         continue
         
     # get the correct master dark. if not exact exp time, scale it
-    # from the longest dark frame
+    # from the longest dark frame. if no darks at all, continue.
     expt = df['exp'][flat_idx[0]]
     try:
-        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(expt)+'.fits')
+        dark = getdark(expt)
     except IOError:
-        scaleto = np.max(df['exp'][df['exp'] != ''])
-        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(scaleto)+'.fits')
-        dark *= (expt/scaleto)
-
-    
-    flats = np.array([trim_image(df['fname'][n])[0] 
-                      for n in flat_idx]) - bias - dark
+        #print('   > No darks found for exposure time ' + str(expt) + 'sec. Continuing reductions...')
+        dark = 0.
+        
+    flats = np.array([trim_image(df['fname'][n])[0] for n in flat_idx]) - bias - dark
     flat_final = np.median(flats,axis=0)
     flat_final /= np.max(flat_final)
 
     filts = filters[ii][-1]
     name = direc+'/reduced/cals/master_flat_'+filts+'.fits'
     pyfits.writeto(name,flat_final,clobber=True)
-    print('     > Created master '+ str(filters[ii])+' flat')
+    print('   > Created master '+ str(filters[ii])+' flat')
 
 
 
@@ -177,7 +191,10 @@ for n in dat_idx:
     dat_head = datfile[1]
     
     time = df['exp'][n]
-    dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(time)+'.fits')
+    try:
+        dark = getdark(time)
+    except IOError:
+        dark = 0.
     
     filt = (df['filt'][n])[-1]
     flat = pyfits.getdata(direc+'/reduced/cals/master_flat_'+str(filt)+'.fits')
