@@ -3,11 +3,11 @@
 
 """
 acronym.py
-Kolby Weisenburger
+Kolby Weisenburger, Joseph Huehnerhoff, Emily Levesque, Phil Massey
+kweis@uw.edu
 2016
 
 Automatic reduction pipeline for the Astrophysical Research Consortium Imaging Camera (ARCTIC) at Apache Point Observatory (APO).
-
 
 to use:
 python acronym.py [your directory of data]
@@ -34,11 +34,13 @@ import pandas as pd
 # ignore overwriting reduced files warnings in case you need to rerun
 warnings.filterwarnings('ignore', message='Overwriting existing file')
 
+# take directory from user or assume current directory
 if len(sys.argv) > 1:
     direc = sys.argv[1]
 else:
     direc = '.'
-    
+
+# directories for reduced images
 if not os.path.exists(direc+'/reduced/cals'):
     os.makedirs(direc+'/reduced/cals')
 if not os.path.exists(direc+'/reduced/data'):
@@ -106,8 +108,6 @@ def getdark(expt):
 
 
 
-
-
 ### CREATE MASTER BIAS #######################################
 
 print('\n >>> Starting bias combine...')
@@ -127,13 +127,13 @@ else:
 ### CREATE MASTER DARKS ######################################
 ### these are bias subtracted
 
-times = pd.unique(df.exp.ravel())
+# array of all exposure times found
+times = filter(None,pd.unique(df.exp.ravel()))
 
 print('\n >>> Starting darks...')
 
 for ii in range(0,len(times)):
-    dark_idx = df[(df['exp'] == times[ii]) & 
-                (df['objtype'] == 'Dark')].index.tolist()
+    dark_idx = df[(df['exp'] == times[ii]) & (df['objtype'] == 'Dark')].index.tolist()
     if len(dark_idx) == 0:
         print('   > No darks found for exposure time ' + str(times[ii]) + ' sec. Continuing reductions...')
     else:
@@ -149,33 +149,33 @@ for ii in range(0,len(times)):
 ### CREATE MASTER FLATS ######################################
 ### these are bias and dark subtracted then normalized
 
-filters = pd.unique(df.filt.ravel())
+# array of all filters found
+filters = filter(None,pd.unique(df.filt.ravel()))
 
 print('\n >>> Starting flats...')
 
 for ii in range(0,len(filters)):
-    flat_idx = df[(df['filt'] == filters[ii]) & 
-                   (df['objtype'] == 'Flat')].index.tolist()
+    flat_idx = df[(df['filt'] == filters[ii]) & (df['objtype'] == 'Flat')].index.tolist()
+    
     if len(flat_idx) == 0:
-        continue
+        print('   > No flats found for the ' + str(filters[ii]) + ' filter. Continuing reductions...')
+    else:
+        # get the correct master dark. if not exact exp time, scale it
+        # from the longest dark frame. if no darks at all, continue.
+        expt = df['exp'][flat_idx[0]]
+        try:
+            dark = getdark(expt)
+        except IOError:
+            dark = 0.
         
-    # get the correct master dark. if not exact exp time, scale it
-    # from the longest dark frame. if no darks at all, continue.
-    expt = df['exp'][flat_idx[0]]
-    try:
-        dark = getdark(expt)
-    except IOError:
-        #print('   > No darks found for exposure time ' + str(expt) + 'sec. Continuing reductions...')
-        dark = 0.
-        
-    flats = np.array([trim_image(df['fname'][n])[0] for n in flat_idx]) - bias - dark
-    flat_final = np.median(flats,axis=0)
-    flat_final /= np.max(flat_final)
+        flats = np.array([trim_image(df['fname'][n])[0] for n in flat_idx]) - bias - dark
+        flat_final = np.median(flats,axis=0)
+        flat_final /= np.max(flat_final)
 
-    filts = filters[ii][-1]
-    name = direc+'/reduced/cals/master_flat_'+filts+'.fits'
-    pyfits.writeto(name,flat_final,clobber=True)
-    print('   > Created master '+ str(filters[ii])+' flat')
+        filts = filters[ii][-1]
+        name = direc+'/reduced/cals/master_flat_'+filts+'.fits'
+        pyfits.writeto(name,flat_final,clobber=True)
+        print('   > Created master '+ str(filters[ii])+' flat')
 
 
 
@@ -197,13 +197,14 @@ for n in dat_idx:
         dark = 0.
     
     filt = (df['filt'][n])[-1]
-    flat = pyfits.getdata(direc+'/reduced/cals/master_flat_'+str(filt)+'.fits')
-    
+    try:
+        flat = pyfits.getdata(direc+'/reduced/cals/master_flat_'+str(filt)+'.fits')
+    except IOError:
+        print('   > Warning! No ' + str(df['filt'][n]) + ' filter flat found for ' + df['fname'][n])
+        flat = 1.
+        
     dat = (dat_raw - dark) / flat
     name = direc+'/reduced/data/red_'+(df['fname'][n]).replace(direc+"/","")
     pyfits.writeto(name,dat,clobber=True,header=dat_head)
 
-print(' >>> Finished reductions! \n')
-
-
-
+print('\n >>> Finished reductions! \n')
