@@ -46,4 +46,7 @@ For example:
  >>> Finished reductions! 
   ```
   
-  This created example/rawdata/reduced/cals/ and example/rawdata/reduced/data/.
+  This created _example/rawdata/reduced/cals/_ and _example/rawdata/reduced/data/_.
+  
+
+Please contact Kolby Weisenburger (kweis@uw.edu) with questions, comments or concerns. 
