@@ -22,31 +22,28 @@ OR place .py in your folder with data and run with no argument:
 
 **python acronym.py**
 
-creates [your directory]/reduced/cals/ and [your directory]/reduced/data/
-
-
+For example:
 
   ```bash
-04:50:00 $ python acronym.py rawdata/
+04:51:10 $ python acronym.py example/rawdata
 
  >>> Starting bias combine...
-     > Created master bias
+   > Created master bias
 
- >>> Starting darks (if you have them)...
-     > Created master 10.0 second dark
-     > Created master 120.0 second dark
-     > Created master 30.0 second dark
-     > Created master 300.0 second dark
-     > Created master 5.0 second dark
-     > Created master 60.0 second dark
+ >>> Starting darks...
+   > Created master 10.0 second dark
+   > Created master 120.0 second dark
+   > Created master 30.0 second dark
+   > Created master 5.0 second dark
+   > Created master 60.0 second dark
 
  >>> Starting flats...
-     > Created master MSSSO R flat
-     > Created master MSSSO B flat
-     > Created master MSSSO I flat
-     > Created master MSSSO U flat
-     > Created master MSSSO V flat
+   > Created master MSSSO R flat
+   > Created master MSSSO V flat
 
- >>> 65 science images found. Starting reductions...
+ >>> 8 science images found. Starting reductions...
+
  >>> Finished reductions! 
   ```
+  
+  This created example/rawdata/reduced/cals/ and example/rawdata/reduced/data/.
