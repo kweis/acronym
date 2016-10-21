@@ -12,7 +12,7 @@ _Stacked M106 image using reduced Johnson V, R, and I band images (reduced by **
 
 ## Example
 
-You can test the **acronym** pipeline using the (unzipped) /example/rawdata data directory in this repository or an ARCTIC dataset of your choosing.
+You can test the **acronym** pipeline using the /example/rawdata data directory in this repository or an ARCTIC dataset of your choosing.
 
 To use:
 
