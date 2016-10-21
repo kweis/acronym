@@ -46,7 +46,10 @@ For example:
  >>> Finished reductions! 
   ```
   
-  This created _example/rawdata/reduced/cals/_ and _example/rawdata/reduced/data/_.
+  This created _example/rawdata/reduced/cals/_ and _example/rawdata/reduced/data/_. In case of missing select calibration (e.g. 30 second darks), **acronym** will alert you, but continue to reduce the other images. 
+  
+  
+  
   
 
 Please contact Kolby Weisenburger (kweis@uw.edu) with questions, comments or concerns. 
