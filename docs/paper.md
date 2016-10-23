@@ -1,5 +1,5 @@
 ---
-title: 'acronym: An automatic reduction pipeline for astronomical images'
+title: 'acronym: An Automatic Reduction Pipeline for Astronomical Images'
 tags:
   - Python
   - data reduction
