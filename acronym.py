@@ -19,17 +19,17 @@ creates /reduced/cals/ and /reduced/data/
 
 """
 
-import astropy.io.fits as pyfits
 import numpy as np
-import matplotlib.pyplot as plt
-import pyfits
-import pylab
 import glob
 import os
 import re
 import sys
 import warnings
 import pandas as pd
+try:
+    import astropy.io.fits as pyfits
+except ImportError:
+    import pyfits
 
 # ignore overwriting reduced files warnings in case you need to rerun
 warnings.filterwarnings('ignore', message='Overwriting existing file')
@@ -42,9 +42,9 @@ else:
 
 # directories for reduced images
 if not os.path.exists(direc+'/reduced/cals'):
-    os.makedirs(direc+'/reduced/cals')
+    os.makedirs(os.path.join(direc, 'reduced/cals'))
 if not os.path.exists(direc+'/reduced/data'):
-    os.makedirs(direc+'/reduced/data')
+    os.makedirs(os.path.join(direc, 'reduced/data'))
 
 # grab all files from the directory; organize dataframe
 files = glob.glob(direc+"/*.fits")
@@ -128,7 +128,7 @@ else:
 ### these are bias subtracted
 
 # array of all exposure times found
-times = filter(None,pd.unique(df.exp.ravel()))
+times = list(filter(None,pd.unique(df.exp.ravel())))
 
 print('\n >>> Starting darks...')
 
@@ -150,7 +150,7 @@ for ii in range(0,len(times)):
 ### these are bias and dark subtracted then normalized
 
 # array of all filters found
-filters = filter(None,pd.unique(df.filt.ravel()))
+filters = list(filter(None,pd.unique(df.filt.ravel())))
 
 print('\n >>> Starting flats...')
 
@@ -204,7 +204,7 @@ for n in dat_idx:
         flat = 1.
         
     dat = (dat_raw - dark) / flat
-    name = direc+'/reduced/data/red_'+(df['fname'][n]).replace(direc+"/","")
+    name = os.path.join(direc, 'reduced/data', 'red_'+os.path.basename(df['fname'][n]))
     pyfits.writeto(name,dat,clobber=True,header=dat_head)
 
 print('\n >>> Finished reductions! \n')
