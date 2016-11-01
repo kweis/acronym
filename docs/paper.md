@@ -1,5 +1,5 @@
 ---
-title: 'acronym: An automatic reduction pipeline for astronomical images'
+title: 'acronym: An Automatic Reduction Pipeline for Astronomical Images'
 tags:
   - Python
   - data reduction
@@ -7,17 +7,22 @@ tags:
 authors:
   - name: Kolby L. Weisenburger
     orcid: 0000-0002-4639-1436
-    affiliation: University of Washington
+    affiliation: 1
   - name: Joseph Huehnerhoff
     orcid:
-    affiliation: University of Washington
+    affiliation: 1
   - name: Emily M. Levesque
     orcid:
-    affiliation: University of Washington
+    affiliation: 1
   - name: Philip Massey
     orcid:
-    affiliation: Lowell Observatory
-date: 19 Oct 2016
+    affiliation: 2
+affiliations:
+  - name: University of Washington
+    index: 1
+  - name: Lowell Observatory
+    index: 2
+date: 23 Oct 2016
 bibliography: paper.bib
 ---
 
@@ -25,7 +30,7 @@ bibliography: paper.bib
 
 Acronym is a Python implementation of an automatic reduction pipeline for the Astrophysical Research Consortium Telescope Imaging Camera (ARCTIC). ARCTIC is an optical-wavelength CCD camera mounted on a 3.5 meter telescope at Apache Point Observatory (APO) in Sunspot, New Mexico. 
 
-Given raw ARCTIC images (taken in regular or quadrature read-out mode), acronym outputs dark, bias, and flat-corrected images. 
+Given raw ARCTIC images, acronym outputs dark, bias, and flat-corrected images. 
 
 This M106 image is the product of three stacked acronym-reduced images.
 
