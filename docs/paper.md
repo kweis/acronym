@@ -37,3 +37,5 @@ This M106 image is the product of three stacked acronym-reduced images.
 -![M106 in all its glory.](Aligned_m106.png)
 
 # References 
+
+Craig, M. W.; Crawford, S. M.; Deil, Christoph; Gasdia, Forrest; Gomez, Carlos; Günther, Hans Moritz; Heidt, Nathan; Horton, Anthony; Karr, Jennifer; Nelson, Stefan; Ninan, Joe Phillip; Pattnaik, Punyaslok; Rol, Evert; Schoenell, William; Seifert, Michael; Singh, Sourav; Sipocz, Brigitta; Stotts, Connor; Streicher, Ole; Tollerud, Erik; and Walker, Nathan, 2015, Astrophysics Source Code Library, 1510.007, DOI: 10.5281/zenodo.47652

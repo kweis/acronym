@@ -119,7 +119,7 @@ if len(bias_idx) == 0:
 else:
     biases = np.array([trim_image(df['fname'][n])[0] for n in bias_idx])
     bias = np.median(biases,axis=0)
-    pyfits.writeto(direc+'/reduced/cals/master_bias.fits',bias,clobber=True)
+    pyfits.writeto(direc+'/reduced/cals/master_bias.fits',bias,overwrite=True)
     print('   > Created master bias')
 
 
@@ -141,7 +141,7 @@ for ii in range(0,len(times)):
         dark_final = np.median(darks,axis=0)
     
         name = direc+'/reduced/cals/master_dark_'+str(times[ii])+'.fits'
-        pyfits.writeto(name,dark_final,clobber=True)
+        pyfits.writeto(name,dark_final,overwrite=True)
         print('   > Created master '+ str(times[ii])+' second dark')
 
 
@@ -174,7 +174,7 @@ for ii in range(0,len(filters)):
 
         filts = filters[ii][-1]
         name = direc+'/reduced/cals/master_flat_'+filts+'.fits'
-        pyfits.writeto(name,flat_final,clobber=True)
+        pyfits.writeto(name,flat_final,overwrite=True)
         print('   > Created master '+ str(filters[ii])+' flat')
 
 
@@ -205,6 +205,6 @@ for n in dat_idx:
         
     dat = (dat_raw - dark) / flat
     name = os.path.join(direc, 'reduced/data', 'red_'+os.path.basename(df['fname'][n]))
-    pyfits.writeto(name,dat,clobber=True,header=dat_head)
+    pyfits.writeto(name,dat,overwrite=True,header=dat_head)
 
 print('\n >>> Finished reductions! \n')
