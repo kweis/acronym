@@ -20,6 +20,9 @@ OR place .py in your folder with data and run with no argument:
 
 **python acronym.py**
 
+Note that there is a requirements.txt file. To install necessary dependencies:
+
+**pip install -r requirements.txt**
 
 ## Example
 
