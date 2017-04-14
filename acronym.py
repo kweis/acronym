@@ -5,7 +5,7 @@
 acronym.py
 Kolby Weisenburger, Joseph Huehnerhoff, Emily Levesque, Phil Massey
 kweis@uw.edu
-2016
+2017
 
 Automatic reduction pipeline for the Astrophysical Research Consortium Imaging Camera (ARCTIC) at Apache Point Observatory (APO).
 
@@ -16,7 +16,6 @@ OR place .py in your folder with data and run with no argument:
 python acronym.py
 
 creates /reduced/cals/ and /reduced/data/
-
 """
 
 import numpy as np
@@ -26,13 +25,12 @@ import re
 import sys
 import warnings
 import pandas as pd
-try:
-    import astropy.io.fits as pyfits
-except ImportError:
-    import pyfits
+import astropy.io.fits as pyfits
 
+    
 # ignore overwriting reduced files warnings in case you need to rerun
 warnings.filterwarnings('ignore', message='Overwriting existing file')
+
 
 # take directory from user or assume current directory
 if len(sys.argv) > 1:
@@ -40,12 +38,14 @@ if len(sys.argv) > 1:
 else:
     direc = '.'
 
+    
 # directories for reduced images
 if not os.path.exists(direc+'/reduced/cals'):
     os.makedirs(os.path.join(direc, 'reduced/cals'))
 if not os.path.exists(direc+'/reduced/data'):
     os.makedirs(os.path.join(direc, 'reduced/data'))
 
+    
 # grab all files from the directory; organize dataframe
 files = glob.glob(direc+"/*.fits")
 
@@ -64,9 +64,21 @@ for ff,fname in enumerate(files):
     except IOError:    
         print('\n File corrupt or missing: ' + fname)
 
-
-# ARCTIC reads out images in various ways. check headers for quad or LL (lower left) mode and trim respectively        
+       
 def trim_image(f):
+    """
+    trim_image returns a trimmed version of the raw image. The ARCTIC detector is structured in four quadrants which can be read out individually (Quad Mode) or as a whole (Lower Left Mode) and trim_image identifies which readout mode was used and crops the image accordingly.
+
+    Parameters
+    ----------
+    f : raw fits image from ARCTIC
+
+    Returns
+    -------
+    alldat : a list with [the image in a numpy array, the astropy header]
+    
+    """
+    
     datfile = pyfits.getdata(f, header=True)
     dat_raw = datfile[0]
     dat_head = datfile[1]
@@ -91,19 +103,32 @@ def trim_image(f):
         idx_string = pyfits.open(f)[0].header['DSEC11']
         idx = re.split('[: ,]',idx_string.rstrip(']').lstrip('['))
         sci = dat_raw[int(idx[2]):int(idx[3]),int(idx[0]):int(idx[1])]
-    
-    return [sci,dat_head]
+
+    alldat = [sci,dat_head]
+    return alldat
 
 
 
-# given an exposure time, go get that dark or scale down from longest dark. 
 def getdark(expt):
+    """
+    Generate a dark given an exposure time or scale down from longest dark available
+
+    Parameters
+    ----------
+    expt : exposure time (in the data frame: df['exp'])
+
+    Returns
+    -------
+    dark : dark image for that exposure time (numpy array)
+    """
+    
     try:
         dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(expt)+'.fits')
     except IOError:
         scaleto = np.max(df['exp'][df['exp'] != ''])
         dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(scaleto)+'.fits')
         dark *= (expt/scaleto)
+
     return dark
 
 
