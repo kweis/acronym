@@ -28,7 +28,7 @@ bibliography: paper.bib
 
 # Summary
 
-Acronym is a Python implementation of an automatic reduction pipeline for the Astrophysical Research Consortium Telescope Imaging Camera (ARCTIC). ARCTIC is an optical-wavelength CCD camera mounted on a 3.5 meter telescope at Apache Point Observatory (APO) in Sunspot, New Mexico. 
+Acronym is a Python implementation of an automatic reduction pipeline for the Astrophysical Research Consortium Telescope Imaging Camera (ARCTIC). ARCTIC is an optical-wavelength CCD camera mounted on a 3.5 meter telescope at Apache Point Observatory (APO) in Sunspot, New Mexico. We developed in-house procedures to reduce ARCTIC images rather than using other similar packages (e.g. @ccdproc) to handle ARCTIC's various CCD readout modes.
 
 Given raw ARCTIC images, acronym outputs dark, bias, and flat-corrected images. 
 
@@ -37,5 +37,3 @@ This M106 image is the product of three stacked acronym-reduced images.
 -![M106 in all its glory.](Aligned_m106.png)
 
 # References 
-
-Craig, M. W.; Crawford, S. M.; Deil, Christoph; Gasdia, Forrest; Gomez, Carlos; Günther, Hans Moritz; Heidt, Nathan; Horton, Anthony; Karr, Jennifer; Nelson, Stefan; Ninan, Joe Phillip; Pattnaik, Punyaslok; Rol, Evert; Schoenell, William; Seifert, Michael; Singh, Sourav; Sipocz, Brigitta; Stotts, Connor; Streicher, Ole; Tollerud, Erik; and Walker, Nathan, 2015, Astrophysics Source Code Library, 1510.007, DOI: 10.5281/zenodo.47652
