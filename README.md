@@ -26,7 +26,7 @@ Note that there is a requirements.txt file. To install necessary dependencies:
 
 ## Example
 
-You can test the **acronym** pipeline using the /example/rawdata zipfile (example.zip in release docs) or an ARCTIC dataset of your choosing. To verify the results of the reduced example directory, use the test.py script (see below).
+You can test the **acronym** pipeline using the rawdata zipfile (example.zip in [release docs] (https://github.com/kweis/acronym/releases/tag/v1.0.1)) or an ARCTIC dataset of your choosing. 
 
 
 Expected output for example directory reduction:
