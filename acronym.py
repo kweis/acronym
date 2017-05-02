@@ -27,7 +27,7 @@ import warnings
 import pandas as pd
 import astropy.io.fits as pyfits
 
-    
+
 # ignore overwriting reduced files warnings in case you need to rerun
 warnings.filterwarnings('ignore', message='Overwriting existing file')
 
@@ -38,16 +38,18 @@ if len(sys.argv) > 1:
 else:
     direc = '.'
 
-    
-# directories for reduced images
-if not os.path.exists(direc+'/reduced/cals'):
-    os.makedirs(os.path.join(direc, 'reduced/cals'))
-if not os.path.exists(direc+'/reduced/data'):
-    os.makedirs(os.path.join(direc, 'reduced/data'))
+cals_direc = os.path.join(direc, 'reduced', 'cals')
+reduced_direc = os.path.join(direc, 'reduced', 'data')
 
-    
+# directories for reduced images
+if not os.path.exists(cals_direc):
+    os.makedirs(cals_direc)
+if not os.path.exists(reduced_direc):
+    os.makedirs(reduced_direc)
+
+
 # grab all files from the directory; organize dataframe
-files = glob.glob(direc+"/*.fits")
+files = glob.glob(os.path.join(direc, "*.fits"))
 
 df = pd.DataFrame(files,columns=['fname'])
 df['objtype'] = pd.Series("", index=df.index)
@@ -61,10 +63,10 @@ for ff,fname in enumerate(files):
         df['filt'][ff] = pyfits.open(fname)[0].header['FILTER']
         df['exp'][ff] = pyfits.open(fname)[0].header['EXPTIME']
         df['objname'][ff] = pyfits.open(fname)[0].header['OBJNAME']
-    except IOError:    
+    except IOError:
         print('\n File corrupt or missing: ' + fname)
 
-       
+
 def trim_image(f):
     """
     trim_image returns a trimmed version of the raw image. The ARCTIC detector is structured in four quadrants which can be read out individually (Quad Mode) or as a whole (Lower Left Mode) and trim_image identifies which readout mode was used and crops the image accordingly.
@@ -76,15 +78,15 @@ def trim_image(f):
     Returns
     -------
     alldat : a list with [the image in a numpy array, the astropy header]
-    
+
     """
-    
+
     datfile = pyfits.getdata(f, header=True)
     dat_raw = datfile[0]
     dat_head = datfile[1]
-    
+
     amp = pyfits.open(f)[0].header['READAMPS']
-    
+
     if amp == "Quad":
         # ll, ul, lr, ur
         quads = ['DSEC11', 'DSEC21', 'DSEC12', 'DSEC22']
@@ -94,11 +96,11 @@ def trim_image(f):
             idx_string = pyfits.open(f)[0].header[quad]
             idx = re.split('[: ,]',idx_string.rstrip(']').lstrip('['))
             dat[i] = dat_raw[int(idx[2]):int(idx[3]),int(idx[0]):int(idx[1])]
-    
+
         sci_lo = np.concatenate((dat[2], dat[3]), axis = 1)
         sci_up = np.concatenate((dat[0], dat[1]), axis = 1)
         sci = np.concatenate((sci_up, sci_lo), axis = 0)
-    
+
     if amp == 'LL':
         idx_string = pyfits.open(f)[0].header['DSEC11']
         idx = re.split('[: ,]',idx_string.rstrip(']').lstrip('['))
@@ -121,12 +123,14 @@ def getdark(expt):
     -------
     dark : dark image for that exposure time (numpy array)
     """
-    
+
     try:
-        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(expt)+'.fits')
+        dark = pyfits.getdata(os.path.join(cals_direc,
+                                           'master_dark_{0}.fits'.format(expt)))
     except IOError:
         scaleto = np.max(df['exp'][df['exp'] != ''])
-        dark = pyfits.getdata(direc+'/reduced/cals/master_dark_'+str(scaleto)+'.fits')
+        dark = pyfits.getdata(os.path.join(cals_direc,
+                                           'master_dark_{0}.fits'.format(scaleto)))
         dark *= (expt/scaleto)
 
     return dark
@@ -144,7 +148,7 @@ if len(bias_idx) == 0:
 else:
     biases = np.array([trim_image(df['fname'][n])[0] for n in bias_idx])
     bias = np.median(biases,axis=0)
-    pyfits.writeto(direc+'/reduced/cals/master_bias.fits',bias,overwrite=True)
+    pyfits.writeto(os.path.join(cals_direc, 'master_bias.fits'),bias,overwrite=True)
     print('   > Created master bias')
 
 
@@ -164,8 +168,8 @@ for ii in range(0,len(times)):
     else:
         darks = np.array([trim_image(df['fname'][n])[0] for n in dark_idx]) - bias
         dark_final = np.median(darks,axis=0)
-    
-        name = direc+'/reduced/cals/master_dark_'+str(times[ii])+'.fits'
+        name = os.path.join(cals_direc,
+                            'master_dark_{0}.fits'.format(times[ii]))
         pyfits.writeto(name,dark_final,overwrite=True)
         print('   > Created master '+ str(times[ii])+' second dark')
 
@@ -181,7 +185,7 @@ print('\n >>> Starting flats...')
 
 for ii in range(0,len(filters)):
     flat_idx = df[(df['filt'] == filters[ii]) & (df['objtype'] == 'Flat')].index.tolist()
-    
+
     if len(flat_idx) == 0:
         print('   > No flats found for the ' + str(filters[ii]) + ' filter. Continuing reductions...')
     else:
@@ -192,13 +196,13 @@ for ii in range(0,len(filters)):
             dark = getdark(expt)
         except IOError:
             dark = 0.
-        
+
         flats = np.array([trim_image(df['fname'][n])[0] for n in flat_idx]) - bias - dark
         flat_final = np.median(flats,axis=0)
         flat_final /= np.max(flat_final)
 
         filts = filters[ii][-1]
-        name = direc+'/reduced/cals/master_flat_'+filts+'.fits'
+        name = os.path.join(cals_direc, 'master_flat_{0}.fits'.format(filts))
         pyfits.writeto(name,flat_final,overwrite=True)
         print('   > Created master '+ str(filters[ii])+' flat')
 
@@ -214,22 +218,24 @@ for n in dat_idx:
     datfile = trim_image(df['fname'][n])
     dat_raw = datfile[0]
     dat_head = datfile[1]
-    
+
     time = df['exp'][n]
     try:
         dark = getdark(time)
     except IOError:
         dark = 0.
-    
+
     filt = (df['filt'][n])[-1]
     try:
-        flat = pyfits.getdata(direc+'/reduced/cals/master_flat_'+str(filt)+'.fits')
+        flat = pyfits.getdata(os.path.join(cals_direc,
+                                           'master_flat_{0}.fits'.format(filt)))
     except IOError:
         print('   > Warning! No ' + str(df['filt'][n]) + ' filter flat found for ' + df['fname'][n])
         flat = 1.
-        
+
     dat = (dat_raw - dark) / flat
-    name = os.path.join(direc, 'reduced/data', 'red_'+os.path.basename(df['fname'][n]))
+    name = os.path.join(reduced_direc,
+                        'red_{0}'.format(os.path.basename(df['fname'][n])))
     pyfits.writeto(name,dat,overwrite=True,header=dat_head)
 
 print('\n >>> Finished reductions! \n')
