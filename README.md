@@ -1,5 +1,6 @@
 ## Automatic ARCTIC reductions
 [![DOI](https://zenodo.org/badge/56095291.svg)](https://zenodo.org/badge/latestdoi/56095291) 
+[![JOSS](http://joss.theoj.org/papers/a3d09040637afbcff0a01e0d77c563cf/status.svg)](http://joss.theoj.org/papers/a3d09040637afbcff0a01e0d77c563cf)
 
 Kolby L. Weisenburger, Joseph Huehnerhoff, Emily M. Levesque, Philip Massey
 
