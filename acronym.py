@@ -67,13 +67,14 @@ for ff,fname in enumerate(files):
         print('\n File corrupt or missing: ' + fname)
 
        
-def trim_image(f):
+def trim_image(f, overscan_poly_order = 8):
     """
     trim_image returns a trimmed version of the raw image. The ARCTIC detector is structured in four quadrants which can be read out individually (Quad Mode) or as a whole (Lower Left Mode) and trim_image identifies which readout mode was used and crops the image accordingly.
 
     Parameters
     ----------
     f : raw fits image from ARCTIC
+    overscan_poly_order : order of polynomial used to fit overscan
 
     Returns
     -------
@@ -95,7 +96,7 @@ def trim_image(f):
         for i,quad in enumerate(quads):
             idx_string = pyfits.open(f)[0].header[quad]
             idx = re.split('[: ,]',idx_string.rstrip(']').lstrip('['))
-            dat[i] = dat_raw[int(idx[2]):int(idx[3]),int(idx[0]):int(idx[1])]
+            dat[i] = dat_raw[int(idx[2])-1:int(idx[3]),int(idx[0])-1:int(idx[1])]
     
         sci_lo = np.concatenate((dat[2], dat[3]), axis = 1)
         sci_up = np.concatenate((dat[0], dat[1]), axis = 1)
@@ -104,7 +105,22 @@ def trim_image(f):
     if amp == 'LL':
         idx_string = pyfits.open(f)[0].header['DSEC11']
         idx = re.split('[: ,]',idx_string.rstrip(']').lstrip('['))
-        sci = dat_raw[int(idx[2]):int(idx[3]),int(idx[0]):int(idx[1])]
+        sci = dat_raw[int(idx[2])-1:int(idx[3]),int(idx[0])-1:int(idx[1])].astype(np.float64)
+        
+        idx_over_string = pyfits.open(f)[0].header['BSEC11']
+        idx_over = re.split('[: ,]',idx_over_string.rstrip(']').lstrip('['))
+        over = dat_raw[int(idx_over[2])-1:int(idx_over[3]),int(idx_over[0])-1:int(idx_over[1])]
+        
+        #Average along columns
+        avg_overscan = np.mean(over,axis=1)
+        #Index array, then fit!
+        row_idx = np.arange(len(avg_overscan))
+        p = np.polyfit(row_idx,avg_overscan,deg=overscan_poly_order)
+        #Calculate array from fit, then transpose into a column
+        fit_overscan = np.poly1d(p)(row_idx)
+        fit_overscan_col = fit_overscan[:,np.newaxis]
+        #Subtract column!
+        sci -= fit_overscan_col
 
     alldat = [sci,dat_head]
     return alldat
